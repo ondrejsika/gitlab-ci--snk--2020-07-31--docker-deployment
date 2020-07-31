@@ -28,6 +28,18 @@ deploy dev:
     environment:
         name: dev/$CI_COMMIT_REF_SLUG
         url: https://$CI_COMMIT_REF_SLUG.web1.sikademo.com
+        on_stop: stop dev
+
+stop dev:
+    when: manual
+    stage: deploy dev
+    variables:
+        DOCKER_HOST: tcp://web1.sikademo.com:2376
+    script:
+        - docker rm -f $CI_COMMIT_REF_SLUG || true
+    environment:
+        name: dev/$CI_COMMIT_REF_SLUG
+        action: stop
 
 test dev:
     stage: test dev
