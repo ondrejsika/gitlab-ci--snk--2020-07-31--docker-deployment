@@ -32,5 +32,4 @@ deploy dev:
 test dev:
     stage: test dev
     script:
-        - sleep 15
-        - curl https://$CI_COMMIT_REF_SLUG.web1.sikademo.com
+        - curl -k https://$CI_COMMIT_REF_SLUG.web1.sikademo.com
