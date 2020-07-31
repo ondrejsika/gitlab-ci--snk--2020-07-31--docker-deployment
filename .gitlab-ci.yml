@@ -1,0 +1,27 @@
+stages:
+    - build
+    - deploy dev
+    - test dev
+    - deploy prod
+    - test prod
+
+build:
+    stage: build
+    script:
+        - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+        - docker build -t $CI_REGISTRY_IMAGE .
+        - docker push $CI_REGISTRY_IMAGE
+
+deploy dev:
+    stage: deploy dev
+    variables:
+        DOCKER_HOST: tcp://web1.sikademo.com:2376
+    script:
+        - docker pull $CI_REGISTRY_IMAGE
+        - docker run -l traefik.enabled=true -l traefik.frontend.rule=Host:dev.web1.sikademo.com $CI_REGISTRY_IMAGE
+
+test dev:
+    stage: test dev
+    script:
+        - sleep 15
+        - curl https://dev.web1.sikademo.com
